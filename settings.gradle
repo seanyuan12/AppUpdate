@@ -1,3 +1,0 @@
-include ':AppUpdateLib'
-include ':app'
-rootProject.name = "AppUpdater"
