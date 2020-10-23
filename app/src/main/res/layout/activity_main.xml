@@ -10,6 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="跳转到sdk界面" />
+        android:text="检查版本更新" />
 
 </RelativeLayout>

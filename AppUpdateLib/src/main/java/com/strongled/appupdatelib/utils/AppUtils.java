@@ -42,7 +42,7 @@ public class AppUtils {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(Intent.ACTION_VIEW);
         Uri uri = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {   //N FileProvider 适配
             uri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".fileprovider", apkFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -51,8 +51,8 @@ public class AppUtils {
         }
         intent.setDataAndType(uri, "application/vnd.android.package-archive");
         activity.startActivity(intent);
-        //todo N FileProvider 适配
-        //todo O INSTALL PERMISSION 适配
+
+        // O INSTALL PERMISSION 适配，在清单文件里添加android.permission.REQUEST_INSTALL_PACKAGES权限
     }
 
     public static String getFileMd5(File targetFile) {
