@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -104,7 +105,7 @@ public class UpdateVersionShowDialog extends DialogFragment {
         AppUpdater.getInstance().getNetManager().cancel(this);
     }
 
-    public static void show(FragmentActivity activity, DownloadBean bean) {
+    protected static void show(FragmentActivity activity, DownloadBean bean) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_DOWNLOAD_BEAN, bean);
         UpdateVersionShowDialog dialog = new UpdateVersionShowDialog();

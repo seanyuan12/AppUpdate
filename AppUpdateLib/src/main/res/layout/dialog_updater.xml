@@ -1,41 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/shape_dialog_updater_bg"
-    android:gravity="center"
-    android:layout_margin="10dp"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:background="#00000000"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="我是标题"
-        android:textColor="#000"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="我是内容"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tv_updater"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/shape_dialog_updater_btn"
+        android:layout_margin="10dp"
+        android:background="@drawable/shape_dialog_updater_bg"
         android:gravity="center"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:text="升级"
-        android:textColor="#fff"
-        android:textSize="18sp" />
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="我是标题"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="我是内容"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_updater"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_dialog_updater_btn"
+            android:gravity="center"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:text="升级"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

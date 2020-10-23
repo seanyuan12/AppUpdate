@@ -62,4 +62,13 @@ public class UpdateHelper {
         }, context);
     }
 
+    /**
+     * 在Destroy方法里面注销
+     *
+     * @param context
+     */
+    public static void cancelOnDestroy(Context context) {
+        AppUpdater.getInstance().getNetManager().cancel(context);
+    }
+
 }
