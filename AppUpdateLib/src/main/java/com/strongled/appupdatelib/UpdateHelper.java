@@ -43,7 +43,7 @@ public class UpdateHelper {
                 try {
                     long versionCode = Long.parseLong(downloadBean.versionCode);
                     if (versionCode <= AppUtils.getVersionCode(context)) {
-                        Toast.makeText(context, "已经是最新版本了！", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "已经是最新版本了！", Toast.LENGTH_LONG).show();
                         return;
                     }
                 } catch (NumberFormatException e) {
