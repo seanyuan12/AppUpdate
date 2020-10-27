@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class DownloadBean implements Serializable {
     public String title;
     public String content;
-    public String url;
+    public String filename;
     public String md5;
     public String versionCode;
 
@@ -20,13 +20,13 @@ public class DownloadBean implements Serializable {
             JSONObject repJson = new JSONObject(response);  //response 可能不是正常的json字符串，所有要抛个异常
             String title = repJson.optString("title");
             String content = repJson.optString("content");
-            String url = repJson.optString("url");
+            String filename = repJson.optString("filename");
             String md5 = repJson.optString("md5");
             String versionCode = repJson.optString("versionCode");
             DownloadBean bean = new DownloadBean();
             bean.title = title;
             bean.content = content;
-            bean.url = url;
+            bean.filename = filename;
             bean.md5 = md5;
             bean.versionCode = versionCode;
             return bean;

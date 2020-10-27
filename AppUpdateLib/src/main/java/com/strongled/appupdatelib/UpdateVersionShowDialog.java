@@ -28,6 +28,7 @@ import java.io.File;
  */
 public class UpdateVersionShowDialog extends DialogFragment {
     private static final String KEY_DOWNLOAD_BEAN = "download_bean";
+    private static final String HTTP_URL = "https://order.strongled.com/sw_jk/sw_released_apk/";
     private DownloadBean downloadBean;
 
     @Override
@@ -65,7 +66,8 @@ public class UpdateVersionShowDialog extends DialogFragment {
             public void onClick(final View v) {
                 v.setEnabled(false);
                 final File targetFile = new File(getActivity().getCacheDir(), "target.apk");
-                AppUpdater.getInstance().getNetManager().download(downloadBean.url, targetFile, new INetDownloadCallBack() {
+                String downloadUrl = HTTP_URL + downloadBean.filename;
+                AppUpdater.getInstance().getNetManager().download(downloadUrl, targetFile, new INetDownloadCallBack() {
                     @Override
                     public void success(File apkFile) {
                         v.setEnabled(true);

@@ -80,6 +80,7 @@ public class OkHttpManager implements INetManager {
         }
 
         Request.Builder builder = new Request.Builder();
+        builder.addHeader("Accept-Encoding", "identity");
         Request request = builder.url(url).get().tag(tag).build();
         Call call = sOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
