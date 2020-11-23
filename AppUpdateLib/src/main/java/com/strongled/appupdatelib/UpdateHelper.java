@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.strongled.appupdatelib.bean.DownloadBean;
 import com.strongled.appupdatelib.utils.AppUtils;
+import com.strongled.appupdatelib.utils.ConstantsNetwork;
 
 /**
  * Created by Sean on 2020/10/23
@@ -15,8 +16,9 @@ import com.strongled.appupdatelib.utils.AppUtils;
 public class UpdateHelper {
 
     //检查是否服务器是否有最新的版本
-    public static void checkVersion(String url, final Context context) {
-        AppUpdater.getInstance().getNetManager().get(url, new INetCallBack() {
+    public static void checkVersion(String serverUrl, final String api, final Context context) {
+        ConstantsNetwork.URL = serverUrl;
+        AppUpdater.getInstance().getNetManager().get(serverUrl + api, new INetCallBack() {
             @Override
             public void success(String response) {
                 Log.i("Sean", "success: " + response);
