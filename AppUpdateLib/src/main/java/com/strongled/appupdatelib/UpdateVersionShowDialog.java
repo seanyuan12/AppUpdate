@@ -63,38 +63,10 @@ public class UpdateVersionShowDialog extends DialogFragment {
         final TextView tvUpdater = view.findViewById(R.id.tv_updater);
         tvTitle.setText(downloadBean.title);
         tvContent.setText(downloadBean.content);
-        downloadApkFile();
+
     }
 
-    //下载apk文件
-    private void downloadApkFile() {
-        final File targetFile = new File(getActivity().getCacheDir(), "target.apk");
-        String downloadUrl = downloadBean.filename;
-        AppUpdater.getInstance().getNetManager().download(ConstantsNetwork.URL + suffix + downloadUrl, targetFile, new INetDownloadCallBack() {
-            @Override
-            public void success(File apkFile) {
-                UpdateHelper.setIsSuccess(true);
-                dismiss();
-                String fileMd5 = AppUtils.getFileMd5(targetFile);
-                if (fileMd5 != null && fileMd5.equals(downloadBean.md5)) {
-                    AppUtils.installApk(getActivity(), apkFile);
-                } else {
-                    Toast.makeText(getActivity(), "md5检测失败", Toast.LENGTH_LONG).show();
-                }
-            }
 
-            @Override
-            public void progress(int progress) {
-                UpdateHelper.setProgress(progress);
-            }
-
-            @Override
-            public void failed(Throwable throwable) {
-                Toast.makeText(getActivity(), "文件下载失败", Toast.LENGTH_LONG).show();
-                UpdateHelper.setIsSuccess(false);
-            }
-        }, UpdateVersionShowDialog.this);
-    }
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {

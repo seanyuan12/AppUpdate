@@ -1,5 +1,6 @@
 package com.strongled.appupdatelib;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,17 +11,17 @@ import com.strongled.appupdatelib.bean.DownloadBean;
 import com.strongled.appupdatelib.utils.AppUtils;
 import com.strongled.appupdatelib.utils.ConstantsNetwork;
 
+import java.io.File;
+
 /**
  * Created by Sean on 2020/10/23
  */
 public class UpdateHelper {
     private static int checkStatus = -1;
 
-    private static int progress;
-    private static boolean isSuccess;
-
     private static Context ctx;
     private static DownloadBean downloadBean;
+    private static final String suffix = "sw_released_apk/";
 
     //检查是否服务器是否有最新的版本
     public static int checkVersion(String serverUrl, final String api, Context context) {
@@ -30,19 +31,6 @@ public class UpdateHelper {
             @Override
             public void success(String response) {
                 Log.i("Sean", "success: " + response);
-                //1.解析json
-                //{
-                //    "title":"4.5.0更新啦！",
-                //    "content":"1. 优化了阅读体验；\n2. 上线了 hyman 的课程；\n3. 修复了一些已知问题。",
-                //    "url":"http://59.110.162.30/v450_imooc_updater.apk",
-                //    "md5":"14480fc08932105d55b9217c6d2fb90b",
-                //    "versionCode":"450"
-                //}
-                //2.做版本匹配
-                //如果需要更新
-                //3.弹窗提醒
-                //4.点击下载
-
                 downloadBean = DownloadBean.parse(response);
                 if (downloadBean == null) {
                     Toast.makeText(ctx, "数据解析异常", Toast.LENGTH_LONG).show();
@@ -53,7 +41,6 @@ public class UpdateHelper {
                 try {
                     long versionCode = Long.parseLong(downloadBean.versionCode);
                     if (versionCode <= AppUtils.getVersionCode(ctx)) {
-//                        Toast.makeText(context, "已经是最新版本了！", Toast.LENGTH_LONG).show();
                         checkStatus = 0;
                         return;
                     }
@@ -84,30 +71,39 @@ public class UpdateHelper {
         AppUpdater.getInstance().getNetManager().cancel(context);
     }
 
-
     /**
      * 开始下载更新，同时下载进度开始回传
+     * 下载apk文件
      *
      * @return
      */
-    public static void startDownloadApkFile() {
-        UpdateVersionShowDialog.show((FragmentActivity) ctx, downloadBean);
+    public static void downloadApkFile(final IDownloadListener listener) {
+        final File targetFile = new File(ctx.getCacheDir(), "target.apk");
+        String downloadUrl = downloadBean.filename;
+        AppUpdater.getInstance().getNetManager().download(ConstantsNetwork.URL + suffix + downloadUrl, targetFile, new INetDownloadCallBack() {
+            @Override
+            public void success(File apkFile) {
+                String fileMd5 = AppUtils.getFileMd5(targetFile);
+                if (fileMd5 != null && fileMd5.equals(downloadBean.md5)) {
+                    AppUtils.installApk((Activity) ctx, apkFile);
+                } else {
+                    Toast.makeText(ctx, "md5检测失败", Toast.LENGTH_LONG).show();
+                }
+                listener.success();
+            }
+
+            @Override
+            public void progress(int progress) {
+                listener.progress(progress);
+            }
+
+            @Override
+            public void failed(Throwable throwable) {
+                Toast.makeText(ctx, "文件下载失败", Toast.LENGTH_LONG).show();
+                listener.failed(throwable);
+            }
+        }, ctx);
     }
 
 
-    public static int getProgress() {
-        return progress;
-    }
-
-    protected static void setProgress(int progress) {
-        UpdateHelper.progress = progress;
-    }
-
-    public static boolean isSuccess() {
-        return isSuccess;
-    }
-
-    protected static void setIsSuccess(boolean isSuccess) {
-        UpdateHelper.isSuccess = isSuccess;
-    }
 }
