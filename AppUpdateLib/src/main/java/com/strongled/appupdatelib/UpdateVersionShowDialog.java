@@ -1,5 +1,6 @@
 package com.strongled.appupdatelib;
 
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -29,7 +30,6 @@ import java.io.File;
  */
 public class UpdateVersionShowDialog extends DialogFragment {
     private static final String KEY_DOWNLOAD_BEAN = "download_bean";
-    //    private static final String HTTP_URL = "https://order.strongled.com/sw_jk/sw_released_apk/";
     private static final String suffix = "sw_released_apk/";
     private DownloadBean downloadBean;
 
@@ -63,43 +63,37 @@ public class UpdateVersionShowDialog extends DialogFragment {
         final TextView tvUpdater = view.findViewById(R.id.tv_updater);
         tvTitle.setText(downloadBean.title);
         tvContent.setText(downloadBean.content);
-        tvUpdater.setOnClickListener(new View.OnClickListener() {
+        downloadApkFile();
+    }
+
+    //下载apk文件
+    private void downloadApkFile() {
+        final File targetFile = new File(getActivity().getCacheDir(), "target.apk");
+        String downloadUrl = downloadBean.filename;
+        AppUpdater.getInstance().getNetManager().download(ConstantsNetwork.URL + suffix + downloadUrl, targetFile, new INetDownloadCallBack() {
             @Override
-            public void onClick(final View v) {
-                v.setEnabled(false);
-                final File targetFile = new File(getActivity().getCacheDir(), "target.apk");
-                String downloadUrl = downloadBean.filename;
-                AppUpdater.getInstance().getNetManager().download(ConstantsNetwork.URL + suffix + downloadUrl, targetFile, new INetDownloadCallBack() {
-                    @Override
-                    public void success(File apkFile) {
-                        v.setEnabled(true);
-                        Log.i("Sean", "success: " + apkFile.getAbsolutePath());
-                        Toast.makeText(getActivity(), "文件下载成功", Toast.LENGTH_LONG).show();
-                        dismiss();
-
-                        String fileMd5 = AppUtils.getFileMd5(targetFile);
-                        Log.i("Sean", "fileMd5: " + fileMd5);
-                        if (fileMd5 != null && fileMd5.equals(downloadBean.md5)) {
-                            AppUtils.installApk(getActivity(), apkFile);
-                        } else {
-                            Toast.makeText(getActivity(), "md5检测失败", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void progress(int progress) {
-                        Log.i("Sean", "progress: " + progress);
-                        tvUpdater.setText(progress + "%");
-                    }
-
-                    @Override
-                    public void failed(Throwable throwable) {
-                        v.setEnabled(true);
-                        Toast.makeText(getActivity(), "文件下载失败", Toast.LENGTH_LONG).show();
-                    }
-                }, UpdateVersionShowDialog.this);
+            public void success(File apkFile) {
+                UpdateHelper.setIsSuccess(true);
+                dismiss();
+                String fileMd5 = AppUtils.getFileMd5(targetFile);
+                if (fileMd5 != null && fileMd5.equals(downloadBean.md5)) {
+                    AppUtils.installApk(getActivity(), apkFile);
+                } else {
+                    Toast.makeText(getActivity(), "md5检测失败", Toast.LENGTH_LONG).show();
+                }
             }
-        });
+
+            @Override
+            public void progress(int progress) {
+                UpdateHelper.setProgress(progress);
+            }
+
+            @Override
+            public void failed(Throwable throwable) {
+                Toast.makeText(getActivity(), "文件下载失败", Toast.LENGTH_LONG).show();
+                UpdateHelper.setIsSuccess(false);
+            }
+        }, UpdateVersionShowDialog.this);
     }
 
     @Override
@@ -116,5 +110,4 @@ public class UpdateVersionShowDialog extends DialogFragment {
         dialog.setArguments(bundle);
         dialog.show(activity.getSupportFragmentManager(), "UpdateVersionShowDialog");
     }
-
 }

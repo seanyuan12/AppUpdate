@@ -14,10 +14,18 @@ import com.strongled.appupdatelib.utils.ConstantsNetwork;
  * Created by Sean on 2020/10/23
  */
 public class UpdateHelper {
+    private static int checkStatus = -1;
+
+    private static int progress;
+    private static boolean isSuccess;
+
+    private static Context ctx;
+    private static DownloadBean downloadBean;
 
     //检查是否服务器是否有最新的版本
-    public static void checkVersion(String serverUrl, final String api, final Context context) {
+    public static int checkVersion(String serverUrl, final String api, Context context) {
         ConstantsNetwork.URL = serverUrl;
+        ctx = context;
         AppUpdater.getInstance().getNetManager().get(serverUrl + api, new INetCallBack() {
             @Override
             public void success(String response) {
@@ -35,33 +43,36 @@ public class UpdateHelper {
                 //3.弹窗提醒
                 //4.点击下载
 
-                DownloadBean downloadBean = DownloadBean.parse(response);
+                downloadBean = DownloadBean.parse(response);
                 if (downloadBean == null) {
-                    Toast.makeText(context, "数据解析异常", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ctx, "数据解析异常", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 //检测是否需要弹窗
                 try {
                     long versionCode = Long.parseLong(downloadBean.versionCode);
-                    if (versionCode <= AppUtils.getVersionCode(context)) {
+                    if (versionCode <= AppUtils.getVersionCode(ctx)) {
 //                        Toast.makeText(context, "已经是最新版本了！", Toast.LENGTH_LONG).show();
+                        checkStatus = 0;
                         return;
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
-                    Toast.makeText(context, "版本检测接口返回数据异常", Toast.LENGTH_LONG).show();
+                    checkStatus = -1;
                     return;
                 }
 
-                UpdateVersionShowDialog.show((FragmentActivity) context, downloadBean);
+                checkStatus = 1;
+
             }
 
             @Override
             public void failed(Throwable throwable) {
-                Toast.makeText(context, "版本更新请求失败", Toast.LENGTH_LONG).show();
+                checkStatus = -2;
             }
         }, context);
+        return checkStatus;
     }
 
     /**
@@ -73,4 +84,30 @@ public class UpdateHelper {
         AppUpdater.getInstance().getNetManager().cancel(context);
     }
 
+
+    /**
+     * 开始下载更新，同时下载进度开始回传
+     *
+     * @return
+     */
+    public static void startDownloadApkFile() {
+        UpdateVersionShowDialog.show((FragmentActivity) ctx, downloadBean);
+    }
+
+
+    public static int getProgress() {
+        return progress;
+    }
+
+    protected static void setProgress(int progress) {
+        UpdateHelper.progress = progress;
+    }
+
+    public static boolean isSuccess() {
+        return isSuccess;
+    }
+
+    protected static void setIsSuccess(boolean isSuccess) {
+        UpdateHelper.isSuccess = isSuccess;
+    }
 }
