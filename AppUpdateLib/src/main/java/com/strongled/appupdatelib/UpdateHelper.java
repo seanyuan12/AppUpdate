@@ -24,7 +24,7 @@ public class UpdateHelper {
     private static final String suffix = "sw_released_apk/";
 
     //检查是否服务器是否有最新的版本
-    public static int checkVersion(String serverUrl, final String api, Context context) {
+    public static void checkVersion(String serverUrl, final String api, Context context, final ICheckVersionStatusListener listener) {
         ConstantsNetwork.URL = serverUrl;
         ctx = context;
         AppUpdater.getInstance().getNetManager().get(serverUrl + api, new INetCallBack() {
@@ -34,32 +34,28 @@ public class UpdateHelper {
                 downloadBean = DownloadBean.parse(response);
                 if (downloadBean == null) {
                     Toast.makeText(ctx, "数据解析异常", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                //检测是否需要弹窗
-                try {
-                    long versionCode = Long.parseLong(downloadBean.versionCode);
-                    if (versionCode <= AppUtils.getVersionCode(ctx)) {
-                        checkStatus = 0;
-                        return;
+                    listener.checkStatus(-3);
+                } else {
+                    //检测是否需要弹窗
+                    try {
+                        long versionCode = Long.parseLong(downloadBean.versionCode);
+                        if (versionCode <= AppUtils.getVersionCode(ctx)) {
+                            listener.checkStatus(0);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        listener.checkStatus(-2);
                     }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    checkStatus = -1;
-                    return;
+
+                    listener.checkStatus(1);
                 }
-
-                checkStatus = 1;
-
             }
 
             @Override
             public void failed(Throwable throwable) {
-                checkStatus = -2;
+                listener.checkStatus(-1);
             }
         }, context);
-        return checkStatus;
     }
 
     /**

@@ -37,7 +37,6 @@ public class OkHttpManager implements INetManager {
 //        builder.sslSocketFactory();
     }
 
-
     @Override
     public void get(String url, final INetCallBack callBack, Object tag) {
         Request.Builder builder = new Request.Builder();
